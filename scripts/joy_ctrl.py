@@ -7,7 +7,7 @@ import math
 
 
 class Arm:
-	def __init__(self):
+	def _init_(self):
 		rospy.init_node("Arm_publisher")
 		self.pub = rospy.Publisher("set",Pwm,queue_size=1)
 		#self.pub = rospy.Publisher('robotic_arm', Pwm,queue_size=1)  
@@ -27,17 +27,14 @@ class Arm:
 	""" def inverseKinematics(self):
 		length1 = 34
 		length2 = 38
-
-		rad_angle2 = math.acos(((x**2)+ (y**2) - (length1**2) - (length2**2)) / (2*length1*length2))
+		rad_angle2 = math.acos(((x*2)+ (y2) - (length12) - (length2*2)) / (2*length1*length2))
 		rad_angle1= math.atan(y / x) - math.atan((length2*(math.sin(rad_angle2))) / (length1+ length2*(math.cos(rad_angle2))))
-
 		self.set.shoulder_angle= (rad_angle1*180)/math.pi
 		self.set.elbow_angle= (rad_angle2*180)/math.pi	
  """
 	""" def ForwardKinematics(self):
 		length1 = 34
 		length2 = 38
-
 		rad_angle1 = (self.set.shoulder_angle*math.pi)/180
 		rad_angle2 = (self.set.elbow_angle*math.pi)/180
 		x = length1 * math.cos(rad_angle1) +length2 * math.cos(rad_angle1 + rad_angle2)
@@ -66,63 +63,63 @@ class Arm:
 		y = 34
 
 		
-		# left side axis up/down
-		if(abs(msg.axes[7]) != 0):
-			if((abs(msg.axes[7]) > 0.2) and (self.set.shoulder_angle < 250)):
-		 		self.set.shoulder_angle +=  int(80.0*msg.axes[7])
-		 	#	self.ForwardKinematics()
-		if((abs(msg.axes[7]) < 0.2) and (self.set.shoulder_angle > (-250))):
-		 		self.set.shoulder_angle +=  int(80.0*msg.axes[7])
-		 	#	self.ForwardKinematics()
-				#self.ForwardKinematics()
+		# left side axis up/down for elbow
+		if(abs(msg.axes[1]) > 0.2):
+			self.set.shoulder_angle = int(255.0*msg.axes[1])
+		
+		elif(abs(msg.axes[1]) < 0.2):
+			self.set.shoulder_angle = int(255.0*msg.axes[1])
+		
+		else:
+			self.set.shoulder_angle = 0
+
 				
 
-        # left side axis left/right
-		if(abs(msg.axes[6]) != 0):
-			if((abs(msg.axes[6]) > 0.2) and (self.set.elbow_angle < 250)):
-		 		self.set.elbow_angle +=  int(80.0*msg.axes[6])
-		 	#	self.ForwardKinematics()
-
-			if((abs(msg.axes[6]) < 0.2) and(self.set.elbow_angle > (-250)) ):
-		 		self.set.elbow_angle +=  int(80.0*msg.axes[6])
-		 	#	self.ForwardKinematics()	
-
-
+        # left side axis left/right for shoulder
+		if(abs(msg.axes[0]) > 0.2):
+			self.set.elbow_angle = int(255.0*msg.axes[0])
+		
+		elif(abs(msg.axes[0]) < 0.2):
+			self.set.elbow_angle = int(255.0*msg.axes[0])
+		
+		else:
+			self.set.elbow_angle = 0
 	
 
-	   	#right side axis left/right
-		if(abs(msg.axes[3]) > 0.2):
-			self.set.yaw = int(150.0*msg.axes[3])
+
+	   	#right side axis left/right for yaw
+		if(abs(msg.axes[4]) > 0.2):
+			self.set.yaw = int(255.0*msg.axes[4])
 		
-		elif(abs(msg.axes[3]) < 0.2):
-			self.set.yaw = int(150.0*msg.axes[3])
+		elif(abs(msg.axes[4]) < 0.2):
+			self.set.yaw = int(255.0*msg.axes[4])
 		
 		else:
 			self.set.yaw = 0
 
-		#right side axis up/down
-		if(abs(msg.axes[4]) > 0.2):
-			self.set.pitch = int(250.0*msg.axes[4])
+		#right side axis up/down for pitch
+		if(abs(msg.axes[3]) > 0.2):
+			self.set.base = int(255.0*msg.axes[3])
 		
-		elif(abs(msg.axes[4]) < 0.2):
-			self.set.pitch = int(250.0*msg.axes[4])
+		elif(abs(msg.axes[3]) < 0.2):
+			self.set.base = int(255.0*msg.axes[3])
 		
 		else:
-			self.set.pitch = 0
+			self.set.base = 0
 
-		# lb/rb buttons
-		self.set.roll = -250*(msg.buttons[4]-msg.buttons[5])
+		# lb/rb buttons for roll
+		self.set.pitch = -100*(msg.buttons[1]-msg.buttons[2])
 
-		# x/y/a/b buttons
-		self.set.gripper = 250*(msg.buttons[2]-msg.buttons[1])
+		# lb/rb buttons for base
+		self.set.gripper = 250*(msg.buttons[4]-msg.buttons[5])
 
-		self.set.base = -250*(msg.buttons[3]-msg.buttons[0])
+		self.set.roll = -250*(msg.buttons[3]-msg.buttons[0])
 	
 
 '''
         # Computing angle 2 Elbow up/down 
-		numerator = ((length1 + length2)**2) - ((x**2) + (y**2))
-		denominator = ((x**2) + (y**2)) - ((length1 - length2)**2)
+		numerator = ((length1 + length2)*2) - ((x2) + (y*2))
+		denominator = ((x*2) + (y2)) - ((length1 - length2)*2)
 		angle2UP = math.degrees(math.atan(math.sqrt(numerator/denominator)))
 		angle2DOWN = angle2UP * -1
 		#self.set.shoulder_angle
@@ -141,8 +138,7 @@ class Arm:
 		print("Angle 2 Elbow down: " + str(angle2DOWN))		
 '''    
 			
-if __name__ == '__main__':
+if _name_ == '_main_':
 	x = Arm()
 	x.main()
 	rospy.spin()
-
